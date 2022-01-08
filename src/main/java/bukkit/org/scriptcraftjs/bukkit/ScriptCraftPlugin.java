@@ -37,7 +37,7 @@ public class ScriptCraftPlugin extends JavaPlugin
             // This older fix does not work with GraalVM in R21.2.0; in this case
             // it does not return any engine ('engine' is null)
             //ScriptEngineManager scriptEngineManager = new ScriptEngineManager(null);
-            this.engine = scriptEngineManager.getEngineByName("Oracle Nashorn");
+            this.engine = scriptEngineManager.getEngineByName("Nashorn");
             if (this.engine == null) {
                 this.engine = scriptEngineManager.getEngineByName("JavaScript");
             } else {
