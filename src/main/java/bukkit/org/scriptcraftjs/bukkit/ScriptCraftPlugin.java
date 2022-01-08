@@ -7,6 +7,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptEngineFactory;
+// imports for GraalJS bindings
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +32,31 @@ public class ScriptCraftPlugin extends JavaPlugin
         ClassLoader previousClassLoader = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(getClassLoader());
         try {
-            ScriptEngineManager factory = new ScriptEngineManager(null);
-            this.engine = factory.getEngineByName("JavaScript");
+            this.getLogger().severe("Attempting to get script enigine (JavaScript)");
+            ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+            // This older fix does not work with GraalVM in R21.2.0; in this case
+            // it does not return any engine ('engine' is null)
+            //ScriptEngineManager scriptEngineManager = new ScriptEngineManager(null);
+            this.engine = scriptEngineManager.getEngineByName("JavaScript");
+            if (this.engine == null) {
+                this.engine = scriptEngineManager.getEngineByName("Graal.js");
+            }
+
             if (this.engine == null) {
                 this.getLogger().severe(NO_JAVASCRIPT_MESSAGE);
+                this.getLogger().severe("Available engines include:");
+                List<ScriptEngineFactory> engines = (new ScriptEngineManager()).getEngineFactories();
+                for (ScriptEngineFactory f: engines) {
+                    // System.out.println(f.getLanguageName()+" "+f.getEngineName()+" "+f.getNames().toString());
+                    this.getLogger().severe(f.getLanguageName()+" "+f.getEngineName()+" "+f.getNames().toString());
+                }
             } else {
+                // Enrico, adding bindings to work with GraalJS,
+                // see https://www.graalvm.org/reference-manual/js/NashornMigrationGuide/
+                Bindings bindings = this.engine.getBindings(ScriptContext.ENGINE_SCOPE);
+                bindings.put("polyglot.js.allowAllAccess", true);
+                bindings.put("polyglot.js.nashorn-compat", true);
+
                 Invocable inv = (Invocable) this.engine;
                 this.engine.eval(new InputStreamReader(this.getResource("boot.js")));
                 inv.invokeFunction("__scboot", this, engine);
@@ -62,7 +87,7 @@ public class ScriptCraftPlugin extends JavaPlugin
         }
         return result;
     }
-    
+
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         boolean result = false;

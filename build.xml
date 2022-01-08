@@ -209,7 +209,9 @@ Walter Higgins
   <target name="zip_js" depends="zip_lib, zip_modules, zip_plugins">
   </target>
 
-  <target name="copy-js" depends="gen-events-helper-bukkit,gen-events-helper-canary,init">
+  <!-- skipping docs for now... -->
+  <!-- <target name="copy-js" depends="gen-events-helper-bukkit,gen-events-helper-canary,init"> -->
+  <target name="copy-js" depends="init">
     <copy todir="${dist}/js">
       <fileset dir="src/main/js"/>
     </copy>
@@ -254,8 +256,9 @@ Walter Higgins
          excludes="lib/**, modules/**">
     </zip>
   </target>
-  
-  <target name="package" depends="gendocs,zip_js,compile-plugins" description="generate the distribution" >
+  <!-- skipping docs for now... -->
+  <!-- <target name="package" depends="gendocs,zip_js,compile-plugins" description="generate the distribution" > -->
+  <target name="package" depends="zip_js,compile-plugins" description="generate the distribution" >
     <!-- ensure plugin.yml is always copied -->
     <delete file="${build}/plugin.yml" />
     <delete file="${build}/Canary.inf" />
