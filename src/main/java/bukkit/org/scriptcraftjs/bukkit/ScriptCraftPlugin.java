@@ -38,16 +38,18 @@ public class ScriptCraftPlugin extends JavaPlugin
             // it does not return any engine ('engine' is null)
             //ScriptEngineManager scriptEngineManager = new ScriptEngineManager(null);
             this.engine = scriptEngineManager.getEngineByName("Nashorn");
-            if (this.engine == null) {
-                this.engine = scriptEngineManager.getEngineByName("JavaScript");
-            } else {
+            if (this.engine != null) {
                 this.getLogger().severe("Using Oracle Nashorn");
-            }
-
-            if (this.engine == null) {
-                this.engine = scriptEngineManager.getEngineByName("Graal.js");
             } else {
-                this.getLogger().severe("Using Graal.js");
+                this.engine = scriptEngineManager.getEngineByName("JavaScript");
+                if (this.engine != null) {
+                    this.getLogger().severe("Using JavaScript");
+                } else {
+                    this.engine = scriptEngineManager.getEngineByName("Graal.js");
+                    if (this.engine != null) {
+                        this.getLogger().severe("Graal.js");
+                    }
+                }
             }
 
             if (this.engine == null) {
