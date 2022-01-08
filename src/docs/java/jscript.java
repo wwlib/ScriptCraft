@@ -7,7 +7,13 @@ public class jscript
     public static void main(String[] args) throws Exception
     {
         ScriptEngineManager factory = new ScriptEngineManager();
-        ScriptEngine engine = factory.getEngineByName("JavaScript");
+        //ScriptEngine engine = factory.getEngineByName("JavaScript");
+        ScriptEngine engine = factory.getEngineByName("Nashorn");
+        if (engine != null) {
+            System.out.println("Found Nashorn");
+        } else {
+            System.out.println("Engine not found");
+        }
         java.io.File file = new java.io.File(args[0]);
         engine.put("engine",engine);
         engine.put("args",args);
