@@ -346,7 +346,10 @@ function makeTypeIdAndDataSetter() {
     };
   } else {
     try {
-      var CraftEvil = Java.type(server.class.package.name + '.util.CraftEvil');
+      // see: https://github.com/walterhiggins/ScriptCraft/issues/447
+      // see also: https://github.com/walterhiggins/ScriptCraft/pull/443
+      // var CraftEvil = Java.type(server.class.package.name + '.util.CraftEvil');
+      var CraftEvil = Java.type(server.class.package.name + '.legacy.CraftEvil');
       console.log('Drone using CraftEvil.setTypeIdAndData method');
       return function(block, typeId, data, applyPhysics) {
         CraftEvil.setTypeIdAndData(block, typeId, data, applyPhysics);
