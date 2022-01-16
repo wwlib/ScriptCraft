@@ -13,6 +13,7 @@
   <!-- compiles against these libraries -->
   <property name="lib.canary" location="lib/canarymod-1.8.0.jar"/>
   <property name="lib.bukkit" location="lib/spigot-api-1.13.2-R0.1-SNAPSHOT-shaded.jar"/>
+  <property name="lib.nashorn" location="/minecraft/nashorn"/>
 
   <property name="build" location="target/classes"/>
   <property name="dist" location="target/" />
@@ -27,15 +28,20 @@
     <attribute name="lib"/>
     <element name="js-args" implicit="yes" optional="true"/>
     <sequential>
-      <echo message="cp=${build}:${lib.canary}:${lib.bukkit}"></echo>
+      <echo message="cp=${build}:@{lib}:${lib.nashorn}"></echo>
       <echo message="src=@{src} out=@{out} err=@{err}"></echo>
       <java classname="jscript" 
 	    failonerror="true"
 	    fork="true" output="@{out}"  error="@{err}">
-	<classpath>
-          <pathelement path="${build}"/>      
-	  <pathelement path="@{lib}"/>
-	</classpath>
+      <classpath>
+        <pathelement path="${build}"/>      
+        <pathelement path="@{lib}"/>
+        <pathelement path="${lib.nashorn}"/>
+      </classpath>
+      <modulepath>
+        <pathelement location="/minecraft/nashorn"/>
+      </modulepath>
+      <jvmarg line="--add-modules org.openjdk.nashorn"/>
       <arg value="@{src}"/>
       <js-args/>
       </java>
